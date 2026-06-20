@@ -9,7 +9,7 @@ export default function Home() {
         <div className="flex items-center gap-2.5 font-semibold tracking-tight text-lg text-slate-800">
           {/* REPLACE: Swap this div with your actual brand logo mark */}
           <div className="h-6 w-6 rounded bg-indigo-600" />
-          <span>BrandName</span>
+          <span>BrandName.</span>
         </div>
       </header>
 
