@@ -1,119 +1,257 @@
-import Image from "next/image";
-import { Checkbox } from "./ui/checkbox";
+"use client";
 
-// Image Imports
-import GreenTick from "../../public/images/GreenTick.svg";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Pencil, Trash2 } from "lucide-react";
+import IncreaseYourVisibility from "./IncreaseYourVisibility";
+import { useState } from "react";
+
+interface Qualification {
+  id: string;
+  degreeName: string;
+  graduationLevel: string;
+  institutionName: string;
+  completionYear: string;
+}
 
 export default function SubmitDetails() {
-  const engineerBenefits = [
+  // Initialize with one default dynamic qualification block
+  const [qualifications, setQualifications] = useState<Qualification[]>([
     {
-      id: 1,
-      text: "Get discovered by hospitals faster",
+      id: "initial-id",
+      degreeName: "",
+      graduationLevel: "",
+      institutionName: "",
+      completionYear: "",
     },
-    {
-      id: 2,
-      text: "Receive verified service requests",
-    },
-    {
-      id: 3,
-      text: "Build your professional reputation",
-    },
-    {
-      id: 4,
-      text: "Track and manage your assignments",
-    },
-  ];
+  ]);
+
+  // Function to add a new qualification block
+  const addQualification = () => {
+    setQualifications([
+      ...qualifications,
+      {
+        id:
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now().toString(),
+        degreeName: "",
+        graduationLevel: "",
+        institutionName: "",
+        completionYear: "",
+      },
+    ]);
+  };
+
+  // Function to remove a qualification block by ID
+  const removeQualification = (id: string) => {
+    setQualifications(
+      qualifications.filter((item: { id: string }) => item.id !== id),
+    );
+  };
+
+  // Function to handle field value updates safely
+  const handleFieldChange = (
+    id: string,
+    field: keyof Qualification,
+    value: string,
+  ) => {
+    setQualifications(
+      qualifications.map((item: Qualification) =>
+        item.id === id ? { ...item, [field]: value } : item,
+      ),
+    );
+  };
   return (
-    <div className="flex flex-col gap-2">
-      <section className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2 max-w-6xl mx-auto w-full p-4">
+      <section className="flex flex-col gap-2">
         <h1 className="text-[#222428] font-sans font-medium text-[28px] leading-9 text-start">
           Verify your professional credentials
         </h1>
-        <p className="mt-2 text-[#4D5259] font-inter text-[16px] leading-5 text-start">
+        <p className="text-[#4D5259] font-inter text-[16px] leading-5 text-start">
           We'll personalize service requests, job opportunities, and
           recommendations based on your experience.
         </p>
       </section>
-      <section className="flex">
-        {/* right div */}
-        <div></div>
-        {/* left div */}
-        <div className="flex flex-col px-7 pt-7 pb-9">
-          <h2 className="text-[#222428] font-inter font-medium text-[18px] leading-5.5">
-            Increase Your Visibility
+
+      <section className="flex flex-col md:flex-row-reverse gap-8 mt-6 items-start w-full">
+        {/* Left Div - Education Details Form Card */}
+        {/* Education & Academic Background */}
+        <div className="flex-1 w-full order-1 md:order-2 border border-[#E2E8F0] rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="text-[#222428] font-inter font-semibold text-[20px] mb-6">
+            Education & Academic Background
           </h2>
-          <p className="text-[#4D5259] font-inter font-normal text-[16px] leading-5 text-start">
-            Complete these sections to get faster service request calls.
-          </p>
-          <ul className="flex flex-col gap-3 mt-5">
-            {/* Checkbox Item */}
-            <li className="flex items-center gap-3 text-[#4D5259] font-inter text-[16px] leading-5">
-              <Checkbox id="education" />
-              <label htmlFor="education" className="cursor-pointer select-none">
-                Education
-              </label>
-            </li>
 
-            <li className="flex items-center gap-3 text-[#4D5259] font-inter text-[16px] leading-5">
-              <Checkbox id="Professional certifications" />
-              <label
-                htmlFor="Professional certifications"
-                className="cursor-pointer select-none"
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            {qualifications.map((qual, index) => (
+              <div
+                key={qual.id}
+                className={`space-y-5 relative ${index > 0 ? "pt-6 border-t border-dashed border-slate-200" : ""}`}
               >
-                Professional certifications
-              </label>
-            </li>
+                {/* Remove Button - Only visible for additional blocks */}
+                {qualifications.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeQualification(qual.id)}
+                    className="absolute right-0 top-0 text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1 text-[13px] font-inter font-medium cursor-pointer"
+                    title="Remove Qualification"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span>Remove</span>
+                  </button>
+                )}
 
-            <li className="flex items-center gap-3 text-[#4D5259] font-inter text-[16px] leading-5">
-              <Checkbox id="Identity verification" />
-              <label
-                htmlFor="Identity verification"
-                className="cursor-pointer select-none"
+                {/* First Row: Degree Name & Graduation Level */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[14px] font-medium text-[#222428] font-inter">
+                      Degree name
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="e.g. BE Biomedical engineering"
+                      value={qual.degreeName}
+                      onChange={(e) =>
+                        handleFieldChange(qual.id, "degreeName", e.target.value)
+                      }
+                      className="h-11 border-[#D4D9E0] focus-visible:ring-gray-400 placeholder:text-[#94A3B8] rounded-md"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[14px] font-medium text-[#222428] font-inter">
+                      Graduation level
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full h-11 px-3 py-2 border border-[#D4D9E0] rounded-md bg-white text-[#222428] data-placeholder:text-[#94A3B8] text-[14px] font-inter appearance-none focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer"
+                        value={qual.graduationLevel}
+                        data-placeholder={
+                          qual.graduationLevel === "" ? "true" : undefined
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(
+                            qual.id,
+                            "graduationLevel",
+                            e.target.value,
+                          )
+                        }
+                      >
+                        <option value="" disabled>
+                          Select graduation level
+                        </option>
+                        <option value="bachelors">Bachelor's Degree</option>
+                        <option value="masters">Master's Degree</option>
+                        <option value="diploma">Diploma</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#64748B]">
+                        <svg
+                          className="fill-current h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Row: Institution Name & Year of Completion */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[14px] font-medium text-[#222428] font-inter">
+                      Institution name
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Enter university name"
+                      value={qual.institutionName}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          qual.id,
+                          "institutionName",
+                          e.target.value,
+                        )
+                      }
+                      className="h-11 border-[#D4D9E0] focus-visible:ring-gray-400 placeholder:text-[#94A3B8] rounded-md"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[14px] font-medium text-[#222428] font-inter">
+                      Year of completion
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full h-11 px-3 py-2 border border-[#D4D9E0] rounded-md bg-white text-[#222428] data-placeholder:text-[#94A3B8] text-[14px] font-inter appearance-none focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer"
+                        value={qual.completionYear}
+                        data-placeholder={
+                          qual.completionYear === "" ? "true" : undefined
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(
+                            qual.id,
+                            "completionYear",
+                            e.target.value,
+                          )
+                        }
+                      >
+                        <option value="" disabled>
+                          Select year
+                        </option>
+                        {Array.from({ length: 30 }, (_, i) => 2026 - i).map(
+                          (year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#64748B]">
+                        <svg
+                          className="fill-current h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Bottom Actions Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addQualification}
+                className="flex items-center gap-2 border-[#B7BFCB] text-[#475569] font-inter text-[14px] h-10 px-4 hover:bg-slate-50 rounded-md cursor-pointer"
               >
-                Identity verification
-              </label>
-            </li>
+                <Pencil className="h-4 w-4 text-[#222428]" strokeWidth={2.5} />
+                Add Another Qualification
+              </Button>
 
-            <li className="flex items-center gap-3 text-[#4D5259] font-inter text-[16px] leading-5">
-              <Checkbox id="Equipment experience" />
-              <label
-                htmlFor="Equipment experience"
-                className="cursor-pointer select-none"
+              <Button
+                type="submit"
+                className="bg-[#0058AF] text-white hover:bg-[#004487] font-inter text-[15px] font-medium h-10 w-24 rounded-md transition-colors self-end sm:self-auto cursor-pointer"
               >
-                Equipment experience
-              </label>
-            </li>
-          </ul>
+                Save
+              </Button>
+            </div>
 
-          {/* divider */}
-          <div className="w-full h-px bg-[#8B95A2] my-5.5"></div>
-
-          {/* Benifits */}
-          <div className="">
-            <h2 className="text-[#4D5259] font-sans font-medium text-[16px] leading-5">
-              Benefits
-            </h2>
-            <ul className="flex flex-col gap-2">
-              {engineerBenefits.map((benefit) => (
-                <li
-                  key={benefit.id}
-                  className="text-[#4D5259] font-inter font-normal text-[14px] leading-4.5 flex gap-1.5 items-center"
-                >
-                  <Image
-                    src={GreenTick}
-                    alt={benefit.text}
-                    height={24}
-                    width={24}
-                    className="h-6 w-6"
-                  />
-                  <span className="text-center self-center justify-self-center">
-                    {benefit.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <p className="text-[13px] text-[#94A3B8] font-inter font-normal mt-2">
+              Add diplomas, postgraduate degrees, or other relevant
+              qualifications.
+            </p>
+          </form>
         </div>
+
+        {/* Right Div - Checklist Sidebar */}
+        <IncreaseYourVisibility />
       </section>
     </div>
   );
