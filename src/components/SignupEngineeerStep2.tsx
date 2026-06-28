@@ -6,7 +6,9 @@ import User from "../../public/images/UserIcon.svg";
 import Headphone from "../../public/images/HeadphoneIcon.svg";
 import File from "../../public/images/FileIcon.svg";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 export default function SignupEngineerStep2() {
+  const router = useRouter();
   return (
     <div>
 
@@ -36,6 +38,7 @@ export default function SignupEngineerStep2() {
          <div className="flex flex-col gap-3 justify-center items-center mt-10.5">
                   <Button
                     type="submit"
+                    onClick={() => router.push("/signup/engineer/complete-profile")}
                     className="bg-[#0058AF] rounded-sm p-3 text-white font-sans text-[16px] leading-5 w-45.5 h-11 cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-800 hover:shadow-lg "
                   >
                     Create my account
