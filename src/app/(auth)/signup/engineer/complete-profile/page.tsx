@@ -1,9 +1,9 @@
 import SelectExperience from "@/components/SelectExperience"
-import SubmitDetails from "@/components/SubmitDetails"
+import SubmitDetails from "./Components/SubmitDetails"
 
 export default function CompleteEngineerProfile() {
     return(
-        <main className="flex justify-center items-center w-full h-dvh">
+        <main className="flex justify-center items-center w-full h-full">
             {/* Step 1 */}
             {/* <SelectExperience/> */}
             {/* Step 2 */}
